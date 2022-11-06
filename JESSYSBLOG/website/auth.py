@@ -104,3 +104,11 @@ def logout():
     logout_user()
     return redirect(url_for("views.home"))
 
+@auth.route("/edit-post", methods=['GET', 'POST'])
+@login_required
+def edit_post():
+    title = request.form.get("Title")
+    content = request.form.get("content")
+    return render_template("edit_post.html", user=current_user)
+
+

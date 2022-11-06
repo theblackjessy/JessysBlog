@@ -57,8 +57,8 @@ def edit_post(id):
     post = Post.query.filter_by(id=id).first()
 
     if request.method == "POST":
-        current_user.author = request.form['Author']
-        current_user.author = request.form['Author']
+        current_user.title = request.form['Title']
+        current_user.content = request.form['Content']
 
         db.session.commit()
         flash('Changes successfully made!', category='success')
