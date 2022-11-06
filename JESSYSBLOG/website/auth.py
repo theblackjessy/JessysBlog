@@ -7,6 +7,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 auth = Blueprint("auth", __name__)
 
 
+
+@auth.route("/about")
+def about():
+    return render_template("about.html", user=current_user)
+
+@auth.route("/home")
+def home():
+    return render_template("home.html", user=current_user)
+
 @auth.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -25,23 +34,21 @@ def login():
             flash('Email does not exist.', category='error')
     return render_template("login.html", user=current_user)
 
-
-@auth.route("/about")
-def about():
-    return render_template("about.html", user=current_user)
-
-# @auth.route("/request")
-# def request():
-#     return render_template("request.html", user=current_user)
-
-
-@auth.route("/contact")
+@auth.route("/contact", methods=['GET', 'POST'])
 def contact():
-    name = request.form.get("name")
-    email = request.form.get("email")
-    message = request.form.get("message")
-    subject = request.form.get("subject")
-    return render_template("contact.html", user=current_user)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        email = request.form.get("email")
+        message = request.form.get("message")
+        subject = request.form.get("subject")
+    
+        new_message = message (name=name, email=email, subject=subject, message=message)
+        db.session.add(new_message)
+        db.session.commit()
+        
+        flash('Message Sent!')
+        return redirect(url_for('views.contact'))
+    # return render_template("contact.html", user=current_user)
 
 
 @auth.route("/sign-up", methods=['GET', 'POST'])
@@ -49,12 +56,16 @@ def sign_up():
     if request.method == 'POST':
         email = request.form.get("email")
         username = request.form.get("username")
+        firstname = request.form.get("firstname")
+        lastname = request.form.get("lastname")
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
 
         email_exists = User.query.filter_by(email=email).first()
         username_exists = User.query.filter_by(username=username).first()
-
+        firstname_exits = User.query.filter_by(firstname=firstname).first()
+        lastname_exists = User.query.filter_by(lastname=lastname).first()
+        
         if email_exists:
             flash('Email is already in use.', category='error')
         elif username_exists:
@@ -68,7 +79,7 @@ def sign_up():
         elif len(email) < 4:
             flash("Email is invalid.", category='error')
         else:
-            new_user = User(email=email, username=username, password=generate_password_hash(
+            new_user = User(email=email, lastname=lastname, firstname=firstname, username=username, password=generate_password_hash(
                 password1, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
@@ -87,13 +98,9 @@ def posts():
     content = request.form.get("content")
     return render_template("posts.html", user=current_user)
 
-# @auth.route("/request")
-# def request():
-#     return render_template("request.html")
-
-
 @auth.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("views.home"))
+

@@ -6,6 +6,8 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
     username = db.Column(db.String(150), unique=True)
+    lastname = db.Column(db.String(23))
+    firstname = db.Column(db.String(25))
     password = db.Column(db.String(15))
     date_created = db.Column(db.DateTime(timezone=True), default=func.now())
     posts = db.relationship('Post', backref='user', passive_deletes=True)

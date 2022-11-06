@@ -11,16 +11,27 @@ views = Blueprint("views", __name__)
 def home():
     posts = Post.query.all()
     return render_template("home.html", user=current_user, posts=posts)
-    
-# @views.route("/request")
-#     def request():
-#         posts= Post.query.all()
-#         return render_template('request.html',user=current_user,posts=posts)
+
 
 @views.route("/contact")
 def contact():
-    posts = Post.query.all()
-    return render_template('contact.html', user=current_user, posts=posts)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        email = request.form.get("email")
+        message = request.form.get("message")
+        subject = request.form.get("subject")
+
+        if not message:
+            flash('cannot submit an empty message')
+        else:
+            new_message = message(name=name, email=email, subject=subject, message=message)
+            db.session.add(new_message)
+            db.session.commit()
+            flash('Post created!', category='success')
+            return redirect(url_for('views.home'))
+
+    return render_template('contact.html', user=current_user)
+
 
 @views.route("/create-post", methods=['GET', 'POST'])
 @login_required
@@ -40,7 +51,23 @@ def create_post():
     return render_template('create_post.html', user=current_user)
 
 
-@views.route("/delete-post/<id>")
+@views.route("/edit-post/<id>" , methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.filter_by(id=id).first()
+
+    if request.method == "POST":
+        current_user.author = request.form['Author']
+        current_user.author = request.form['Author']
+
+        db.session.commit()
+        flash('Changes successfully made!', category='success')
+        return redirect(url_for('views.home'))
+
+    return render_template('edit_post.html', user=current_user)
+
+
+@views.route("/delete-post/<id>", methods=['GET', 'POST'])
 @login_required
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
@@ -90,8 +117,6 @@ def create_comment(post_id):
     return redirect(url_for('views.home'))
 
 
-    
-
 @views.route("/delete-comment/<comment_id>")
 @login_required
 def delete_comment(comment_id):
@@ -106,5 +131,3 @@ def delete_comment(comment_id):
         db.session.commit()
 
     return redirect(url_for('views.home'))
-
-    
