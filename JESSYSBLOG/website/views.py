@@ -37,12 +37,13 @@ def contact():
 @login_required
 def create_post():
     if request.method == "POST":
-        text = request.form.get('text')
+        title = request.form.get('title')
+        content = request.form.get('content')
 
-        if not text:
+        if not content:
             flash('Post cannot be empty', category='error')
         else:
-            post = Post(text=text, author=current_user.id)
+            post = Post( title=title, content=content, author=current_user.id)
             db.session.add(post)
             db.session.commit()
             flash('Post created!', category='success')
@@ -57,14 +58,14 @@ def edit_post(id):
     post = Post.query.filter_by(id=id).first()
 
     if request.method == "POST":
-        current_user.title = request.form['Title']
-        current_user.content = request.form['Content']
+        post.title = request.form.get('title')
+        post.content = request.form.get('content')
 
         db.session.commit()
         flash('Changes successfully made!', category='success')
         return redirect(url_for('views.home'))
 
-    return render_template('edit_post.html', user=current_user)
+    return render_template('edit_post.html',post=post, user=current_user)
 
 
 @views.route("/delete-post/<id>", methods=['GET', 'POST'])

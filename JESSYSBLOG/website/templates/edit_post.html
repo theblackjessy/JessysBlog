@@ -2,21 +2,20 @@
     %}
     <h1 align="center">Edit a Post</h1>
     
-    <label> Title:</label>
+    <label for="title"> Title:</label>
     <form method="POST">
-    <textarea name="text" id="text" class="form-control" placeholder="Enter Name!" rows="1"></textarea>
+    <textarea name="title" id="text" class="form-control" placeholder="Enter Name!" rows="1">{{post.title}}</textarea>
     <br/>
-    <label>Content:</label>
-    <textarea name="text" id="text" class="form-control" placeholder="Edit content!" rows="4"></textarea>
+    <label for="content">Content:</label>
+    <textarea name="content" id="text" class="form-control" placeholder="Edit content!" rows="4">{{post.content}}</textarea>
     <br>
     <div align="center">
-        <button type="submit" class="btn btn-lg btn-primary">Edit Post</button>
+        <button type="submit" class="btn btn-lg btn-primary">Save Changes</button>
     </div>
     </form>
     <br />
     <div align="center">
     <a href="/home"
-        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
-    >
+        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a>
     </div>
     {% endblock %}

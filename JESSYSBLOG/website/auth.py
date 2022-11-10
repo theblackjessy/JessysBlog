@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, LoginManager, UserMixin, current_user
 from . import db
+from flask import Flask
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -104,11 +105,15 @@ def logout():
     logout_user()
     return redirect(url_for("views.home"))
 
-@auth.route("/edit-post", methods=['GET', 'POST'])
-@login_required
-def edit_post():
-    title = request.form.get("Title")
-    content = request.form.get("content")
-    return render_template("edit_post.html", user=current_user)
+# @auth.route("/edit-post", methods=['GET', 'POST'])
+# @login_required
+# def edit_post():
+#     title = request.form.get("title")
+#     author = request.form.get("author")
+#     content = request.form.get("content")
+
+#     db.session.commit()
+        
+#     return render_template("edit_post.html", user=current_user)
 
 
